@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #3498db, #2980b9); /* Example gradient */
+            color: white; /* White text for contrast */
+            margin: 0; /* Remove default body margins */
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            text-align: center;
+        }
+
+        #display {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #e74c3c; /* Red button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        button:hover{
+            background-color: #c0392b;
+        }
+
+        #laps {
+            margin-top: 20px;
+            list-style-type: none; /* Remove bullet points */
+            padding: 0;
+        }
+
+        #laps li {
+            margin-bottom: 5px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white */
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stopwatch</h1>
+        <div id="display">00:00:00</div>
+        <button id="startStop">Start</button>
+        <button id="reset">Reset</button>
+        <button id="lap">Lap</button>
+        <ul id="laps"></ul>
+    </div>
+
+    <script>
+        // ... (JavaScript code from previous response remains the same)
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+        let isRunning = false;
+
+        const display = document.getElementById('display');
+        const startStopButton = document.getElementById('startStop');
+        const resetButton = document.getElementById('reset');
+        const lapButton = document.getElementById('lap');
+        const lapsList = document.getElementById('laps');
+
+        function formatTime(milliseconds) {
+            let seconds = Math.floor((milliseconds / 1000) % 60);
+            let minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+            let hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            hours = (hours < 10) ? "0" + hours : hours;
+
+            return hours + ":" + minutes + ":" + seconds;
+        }
+
+        function startStop() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                startStopButton.textContent = "Start";
+            } else {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(function() {
+                    elapsedTime = Date.now() - startTime;
+                    display.textContent = formatTime(elapsedTime);
+                }, 10);
+                startStopButton.textContent = "Stop";
+            }
+            isRunning = !isRunning;
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            elapsedTime = 0;
+            display.textContent = "00:00:00";
+            startStopButton.textContent = "Start";
+            isRunning = false;
+            lapsList.innerHTML = ""; // Clear laps
+        }
+
+        function lap() {
+            if (isRunning) {
+                const lapTime = formatTime(elapsedTime);
+                const lapItem = document.createElement('li');
+                lapItem.textContent = lapTime;
+                lapsList.appendChild(lapItem);
+            }
+        }
+
+        startStopButton.addEventListener('click', startStop);
+        resetButton.addEventListener('click', reset);
+        lapButton.addEventListener('click', lap);
+    </script>
+</body>
+</html>
